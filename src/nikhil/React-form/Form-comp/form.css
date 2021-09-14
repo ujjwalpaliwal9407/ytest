@@ -1,0 +1,9 @@
+
+.block-style {
+    border: 0.2rem solid #ececec;
+    width: 14rem;
+    height: 32rem;
+    padding: 1rem;
+    margin: 1.5rem;
+    display: inline-block;
+  }

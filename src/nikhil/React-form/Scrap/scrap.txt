@@ -1,0 +1,237 @@
+OLD TABLE COMPONENT ====
+
+import React, { Component } from "react";
+import { Table } from "react-bootstrap";
+import "./table.css";
+
+class TableComp extends Component {
+  render(props) {
+    const employeeInfo = this.props.employeeInfo;
+    return (
+      <div>
+        <Table striped bordered hover size="sm" className="table_style">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Phone</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {employeeInfo.map((employee, index) => (
+              <tr>
+                <td>{index + 1}</td>
+                <td> {employee.fname} </td>
+                <td> {employee.lname} </td>
+                <td> {employee.phone} </td>
+                <td>
+                  <i
+                    className="fas fa-minus-circle"
+                    onClick={() => this.props.deleteHandler(index)}
+                  ></i>
+
+                  <i
+                    className="fas fa-pen-square"
+                    onClick={() => this.props.updateHandler(index)}
+                  ></i>
+                </td>
+              </tr>
+            ))}
+            {employeeInfo.length === 0 && (
+              <tr>
+                <td colSpan={5} style={{ textAlign: "center" }}>
+                  No Record Found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
+    );
+  }
+}
+
+export default TableComp;
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+OLD MAIN COMPONENT ====
+
+import React, { Component } from "react";
+import FormComp from "./Form-comp/Form";
+import TableComp from "./Table-comp/Table";
+
+class Main extends Component {
+  constructor() {
+    super();
+    this.state = {
+      fname: "",
+      lname: "",
+      phone: "",
+      indexid: "",
+      employeeInfo: [],
+    };
+    this.input = React.createRef();
+  }
+
+  changeHandler = (e) => {
+    // e.preventDefault();
+    this.setState({
+      [e.target.name]: e.target.value,
+      fnameError: false,
+      lnameError: false,
+      phoneError: false,
+    });
+  };
+
+  handleValidate = () => {
+    var fnameError, lnameError, phoneError, error;
+    if (!this.state.fname && this.state.fname.length<10) {
+      fnameError = true;
+    }
+    if (!this.state.lname) {
+      lnameError = true;
+    }
+    if (!this.state.phone) {
+      phoneError = true;
+    }
+    this.setState({
+      fnameError,
+      lnameError,
+      phoneError,
+    });
+
+    if (fnameError || lnameError || phoneError) {
+      error = true;
+    }
+    return error;
+  };
+
+  submitHandler = async (e) => {
+    e.preventDefault();
+    if (await this.handleValidate()) {
+      return null;
+    }
+    const employee = {
+      fname: this.state.fname,
+      lname: this.state.lname,
+      phone: this.state.phone,
+      indexid: this.state.indexid,
+    };
+    const { indexid } = this.state;
+    const employeeInfo = this.state.employeeInfo;
+    if (indexid !== "") {
+      employeeInfo[indexid] = employee;
+      // console.log(employee);
+    } else {
+      employeeInfo.push(employee);
+    }
+    this.setState({
+      employeeInfo,
+      fname: "",
+      lname: "",
+      phone: "",
+      indexid: "",
+    });
+  };
+
+  deleteHandler = (i) => {
+    let employeeInfo = this.state.employeeInfo;
+    employeeInfo.splice(i, 1);
+    this.setState({
+      employeeInfo,
+    });
+  };
+
+  updateHandler = (i) => {
+    let employeeInfo = this.state.employeeInfo[i];
+    this.setState({
+      fname: employeeInfo.fname,
+      lname: employeeInfo.lname,
+      phone: employeeInfo.phone,
+      indexid: i,
+    });
+  };
+
+  render() {
+    console.log(999, this.state);
+    return (
+      <div>
+        <FormComp
+          fname={this.state.fname}
+          lname={this.state.lname}
+          phone={this.state.phone}
+          changeHandler={this.changeHandler}
+          submitHandler={this.submitHandler}
+          fnameError={this.state.fnameError}
+          lnameError={this.state.lameError}
+          phoneError={this.state.phoneError}
+        />
+
+        <TableComp
+          fname={this.state.fname}
+          lname={this.state.lname}
+          phone={this.state.phone}
+          indexid={this.state.indexid}
+          employeeInfo={this.state.employeeInfo}
+          deleteHandler={this.deleteHandler}
+          updateHandler={this.updateHandler}
+        />
+      </div>
+    );
+  }
+}
+
+export default Main;
+
+
+
+///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+Old handle handleValidate ===========
+
+ handleValidate = () => {
+    let fnameError, lnameError, emailError, phoneError, error;
+    if (!this.state.fname || this.state.fname.length < 5) {
+      fnameError = true;
+    }
+    if (!this.state.lname) {
+      lnameError = true;
+    }
+    if (!this.state.email) {
+      emailError = true;
+    }else if (typeof this.state.email !== "undefined") {    
+      var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+      if (!pattern.test(this.state.email)) {
+        emailError = true;
+      }
+    }
+
+    if (!this.state.phone) {
+      phoneError = true;
+    }
+    this.setState({
+      fnameError,
+      lnameError,
+      emailError,
+      phoneError,
+    });
+
+    if (fnameError || lnameError || emailError || phoneError) {
+      error = true;
+    }
+    return error;
+  };
